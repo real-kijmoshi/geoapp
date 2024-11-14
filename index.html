@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>File Upload</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://pyscript.net/releases/2023.11.2/core.css" />
+  <script type="module" src="https://pyscript.net/releases/2023.11.2/core.js"></script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center h-screen">
   <div class="bg-white shadow-md rounded-lg p-10 w-full max-w-2xl">
@@ -21,9 +23,38 @@
         <span class="block text-gray-500 font-medium text-lg">Drop file or click to upload</span>
       </label>
     </div>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded w-full text-lg">
+    <button id="calculateButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded w-full text-lg">
       Calculate
     </button>
   </div>
+  <!-- PyScript Integration -->
+  <py-script>
+    from js import document, FileReader
+
+    def handle_file_upload(event):
+        file_input = document.getElementById("file")
+        if file_input.files.length > 0:
+            uploaded_file = file_input.files[0]
+            file_name = uploaded_file.name
+            output = document.getElementById("output")
+            output.innerHTML = f"File uploaded: {file_name}"
+            if uploaded_file.type == 'text/plain':
+                reader = FileReader.new()
+                reader.readAsText(uploaded_file)
+                def onload(event):
+                    file_content = reader.result
+                    output.innerHTML += f"<br>File content: <pre>{file_content}</pre>"
+                reader.onload = to_js(onload)
+            else:
+                output.innerHTML += "<br>Only text files are supported for reading."
+        else:
+            output = document.getElementById("output")
+            output.innerHTML = "No file selected."
+
+    button = document.getElementById("calculateButton")
+    button.addEventListener("click", handle_file_upload)
+  </py-script>
+  <!-- Output message -->
+  <div id="output" class="mt-6 text-lg text-gray-600"></div>
 </body>
 </html>
