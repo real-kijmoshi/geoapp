@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="bg-white shadow-md rounded-lg p-10 w-full max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6">Upload a File</h1>
+    <div class="flex items-center justify-center bg-gray-200 rounded-lg p-8 mb-6">
+      <input type="file" id="file" name="file" class="hidden" />
+      <label for="file" class="cursor-pointer">
+        <svg class="h-16 w-16 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
+          <path d="M17 21V12h4"></path>
+          <path d="M12 8v8"></path>
+          <path d="M9 15l3-3 3 3"></path>
+        </svg>
+        <span class="block text-gray-500 font-medium text-lg">Drop file or click to upload</span>
+      </label>
+    </div>
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded w-full text-lg">
+      Calculate
+    </button>
+  </div>
+</body>
+</html>
