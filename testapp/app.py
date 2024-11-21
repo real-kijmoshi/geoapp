@@ -1,3 +1,5 @@
+import numpy as np
+import os
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -8,7 +10,6 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.scrollview import ScrollView
 from kivy.graphics import Color, RoundedRectangle
 from kivy.metrics import dp
-import os
 
 class StyledButton(Button):
     def __init__(self, **kwargs):
@@ -47,7 +48,7 @@ class FileProcessingApp(App):
 
         # File Chooser
         self.file_chooser = FileChooserListView(
-            filters=['*.txt', '*.py', '*.md'],  # Limit to text-based files
+            filters=['*.txt'],  # Limit to text-based files
             size_hint=(1, 0.5)
         )
         main_layout.add_widget(self.file_chooser)
@@ -86,19 +87,27 @@ class FileProcessingApp(App):
         if selected:
             file_path = selected[0]
             try:
-                with open(file_path, 'r', encoding='utf-8') as file:
-                    content = file.read()
-                
-                # More interesting processing - count words, lines
-                processed_content = f"File: {os.path.basename(file_path)}\n"
-                processed_content += f"Total Characters: {len(content)}\n"
-                processed_content += f"Total Words: {len(content.split())}\n"
-                processed_content += f"Total Lines: {len(content.split('\\n'))}\n\n"
-                processed_content += "PROCESSED CONTENT:\n"
-                processed_content += content.upper()
+                print(f"Processing file: {file_path}")
+                # Read points from the file
+                points = np.array([
+                    np.array(line.split(" ")[1:], dtype=np.float64)
+                    for line in open(file_path).readlines()
+                ])
 
-                self.processed_content = processed_content
-                self.output_box.text = processed_content
+                # Build matrices
+                tmp_A = [[*point[0:2], 1] for point in points]
+                A = np.matrix(tmp_A)
+                B = np.matrix(points[:, 2]).T
+
+                # Perform computation
+                fit = (A.T * A).I * A.T * B
+
+                # Display results
+                results = f"Fit Results:\n{fit}\n\n"
+                results += f"B Matrix Size: {B.size}\nA Matrix Size: {A.size}"
+                print(results)
+                self.processed_content = results
+                self.output_box.text = results
                 self.status_label.text = f"Processed: {os.path.basename(file_path)}"
             except Exception as e:
                 self.status_label.text = f"Error processing file: {str(e)}"
